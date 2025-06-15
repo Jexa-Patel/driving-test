@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('layouts/head'); -%>
+
+    <body>
+        <!-- Navigation-->
+        <%- include('layouts/nav'); -%>
+            <header class="masthead"
+                style="background-image:linear-gradient(rgba(47, 23, 15, 0.65),rgba(47, 23, 15, 0.65)), url('assets/img/intro.jpg')">
+                <div class="container position-relative px-4 px-lg-5">
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-md-10 col-lg-8 col-xl-7">
+                            <div class="site-heading">
+                                <h1>G2 TEST</h1>
+                                <span class="subheading">How to Get Your G2 License</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main class="mb-4">
+                <div class="container px-4 px-lg-5">
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-md-10 col-lg-8 col-xl-7">
+                            <div class="my-5">
+                                <div class="container my-5">
+                                    <% if (user && user.testType==='g2' && user.testResult !==null) { %>
+                                        <div class="alert alert-info">
+                                            <h4>Test Result</h4>
+                                            <p>
+                                                <strong>Examiner Comment:</strong>
+                                                <%= user.examinerComment %> <br>
+                                                    <strong>Test Status:</strong>
+                                                    <%= user.testResult ? "PASS" : "FAIL" %>
+                                            </p>
+                                        </div>
+                                        <% } else { %>
+                                            <div class="alert alert-warning">
+                                                No test result available yet. Please check back later.
+                                            </div>
+                                            <% } %>
+                                </div>
+                                <% if (user.firstname==='default' && user.lastname==='default' ) { %>
+                                    <h2 class="text-center mb-4">Complete Your G2 Information</h2>
+                                    <% } else { %>
+                                        <h2 class="text-center mb-4">Update Your G2 Information</h2>
+                                        <% } %>
+                                            <% if (typeof errors !=='undefined' && errors.length> 0) { %>
+                                                <div class="alert alert-danger">
+                                                    <ul>
+                                                        <% errors.forEach(error=> { %>
+                                                            <li>
+                                                                <%= error %>
+                                                            </li>
+                                                            <% }) %>
+                                                    </ul>
+                                                </div>
+                                                <% } %>
+                                                    <form id="contactForm" action="/g2/store" method="POST">
+                                                        <div class="d-flex justify-content-center">
+                                                            <h3>Personal Details</h3>
+                                                        </div>
+                                                        <div class="form-floating">
+                                                            <input class="form-control" id="firstname" type="text"
+                                                                name="firstname"
+                                                                value="<%= user.firstname !== 'default' ? user.firstname : '' %>"
+                                                                placeholder="Enter your First Name..." required />
+                                                            <label for="firstname">First Name</label>
+                                                        </div>
+                                                        <div class="form-floating">
+                                                            <input class="form-control" id="lastname" type="text"
+                                                                name="lastname"
+                                                                value="<%= user.lastname !== 'default' ? user.lastname : '' %>"
+                                                                placeholder="Enter your Last Name..." required />
+                                                            <label for="lastname">Last Name</label>
+                                                        </div>
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="licenseno"
+                                                                name="licenseno"
+                                                                value="<%= user.licenseno !== 'default' ? user.licenseno : '' %>"
+                                                                maxlength="8" placeholder="License Number" required>
+                                                            <label for="licenseno">License Number</label>
+                                                        </div>
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control" name="age"
+                                                                id="age" value="<%= user.age !== 0 ? user.age : '' %>"
+                                                                required>
+                                                            <label for="age">Age</label>
+                                                        </div>
+
+                                                        <div class="form-floating">
+                                                            <input type="date" class="form-control" name="dob" id="dob"
+                                                                value="<%= user.dob ? user.dob.toISOString().split('T')[0] : '' %>"
+                                                                required>
+                                                            <label for="dob">DOB</label>
+                                                        </div>
+                                                        <h3 class="text-center mt-5">Book an Appointment Slot</h3>
+
+                                                        <!-- Date Picker for selecting appointment date -->
+                                                        <div class="form-floating mb-3">
+                                                            <input type="date" class="form-control" id="appointmentDate"
+                                                                required>
+                                                            <label for="appointmentDate">Select Appointment Date</label>
+                                                        </div>
+
+                                                        <!-- Available Time Slots -->
+                                                        <div id="availableSlots" class="text-center">
+                                                            <p>Select a date to view available time slots.</p>
+                                                        </div>
+
+                                                        <!-- Book Appointment Button (hidden initially) -->
+                                                        <button id="bookAppointmentButton" class="btn btn-primary mt-3"
+                                                            value="g2" style="display: none;">Book Appointment</button>
+
+                                                        <!-- Status Message -->
+                                                        <p id="statusMessage" class="text-center mt-3"></p>
+                                                        <br />
+                                                        <div class="d-flex justify-content-center">
+                                                            <h3>Car Details</h3>
+                                                        </div>
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="make"
+                                                                name="make"
+                                                                value="<%= user.car_details.make !== 'default' ? user.car_details.make : '' %>"
+                                                                placeholder="Make" required>
+                                                            <label for="make">Make</label>
+                                                        </div>
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" id="model"
+                                                                name="model"
+                                                                value="<%= user.car_details.model !== 'default' ? user.car_details.model : '' %>"
+                                                                placeholder="Model Number" required>
+                                                            <label for="model">Model Number</label>
+                                                        </div>
+                                                        <div class="form-floating">
+                                                            <input type="number" class="form-control" id="year"
+                                                                name="year"
+                                                                value="<%= user.car_details.year !== 0 ? user.car_details.year : '' %>"
+                                                                placeholder="Year" required>
+                                                            <label for="year">Year</label>
+                                                        </div>
+                                                        <div class="form-floating">
+                                                            <input type="text" class="form-control" name="platno"
+                                                                id="platno"
+                                                                value="<%= user.car_details.platno !== 'default' ? user.car_details.platno : '' %>"
+                                                                placeholder="Plate Number" required>
+                                                            <label for="platno">Plate Number</label>
+                                                        </div>
+                                                        <br />
+                                                        <!-- Submit Button-->
+                                                        <button class="btn btn-primary text-uppercase" id="submitButton"
+                                                            type="submit">
+                                                            <%= user.firstname==='default' ? 'Submit' : 'Update' %>
+                                                        </button>
+                                                    </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <script>
+                let selectedSlotId = null;
+
+                document.getElementById("appointmentDate").addEventListener("change", async (e) => {
+                    const date = e.target.value;
+                    const response = await fetch(`/appointments?date=${date}`);
+                    const slots = await response.json();
+
+                    const slotsContainer = document.getElementById("availableSlots");
+                    slotsContainer.innerHTML = ""; // Clear existing slots
+
+                    if (slots.length === 0) {
+                        slotsContainer.innerHTML = "<p>No available slots for the selected date.</p>";
+                        return;
+                    }
+
+                    // Display available slots as selectable buttons
+                    slots.forEach(slot => {
+                        const button = document.createElement("button");
+                        button.textContent = slot.time;
+                        button.classList.add("btn", "btn-secondary", "m-1", "time-slot");
+                        button.dataset.id = slot._id;
+
+                        // Highlight and select the slot when clicked
+                        button.onclick = (event) => {
+                            // Prevent default action (no redirect)
+                            event.preventDefault();
+
+                            // Deselect previous button
+                            document.querySelectorAll(".time-slot").forEach(btn => btn.classList.remove("selected"));
+                            button.classList.add("selected");
+                            selectedSlotId = slot._id;
+
+                            // Show the Book Appointment button
+                            document.getElementById("bookAppointmentButton").style.display = "inline-block";
+                        };
+                        slotsContainer.appendChild(button);
+                    });
+                });
+
+                // Handle the booking of the selected slot when Book Appointment is clicked
+                document.getElementById("bookAppointmentButton").addEventListener("click", async () => {
+                    event.preventDefault();
+                    if (!selectedSlotId) {
+                        document.getElementById("statusMessage").textContent = "Please select a time slot first.";
+                        return;
+                    }
+
+                    const buttonValue = document.getElementById('bookAppointmentButton').value; // Get the value of the button
+                    // API call to book the appointment
+                    const bookingResponse = await fetch("/book-appointment", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ appointmentId: selectedSlotId, buttonValue: buttonValue })
+                    });
+
+                    const result = await bookingResponse.json();
+                    if (result.success) {
+                        alert(result.message);
+                        window.location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                    // document.getElementById("statusMessage").textContent = result.message;
+
+                    // if (result.success == true) {
+                    //     // Update the selected slot button's appearance and hide the booking button
+                    //     document.querySelector(`.time-slot.selected`).classList.add("btn-success");
+                    //     document.querySelector(`.time-slot.selected`).classList.remove("btn-secondary");
+                    //     document.getElementById("bookAppointmentButton").style.display = "none";
+                    //     selectedSlotId = null;
+                    // }
+                });
+            </script>
+            <%- include('layouts/footer'); -%>
+                <%- include('layouts/script'); -%>
+    </body>
+
+</html>

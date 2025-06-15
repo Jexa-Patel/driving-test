@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/head'); -%>
+
+    <body>
+        <%- include('layouts/nav'); -%>
+
+            <!-- Header -->
+            <header class="masthead"
+                style="background-image:linear-gradient(rgba(47, 23, 15, 0.65),rgba(47, 23, 15, 0.65)), url('assets/img/intro.jpg')">
+                <div class="container position-relative text-center text-white">
+                    <div class="site-heading">
+                        <h1 class="display-4 fw-bold">APPOINTMENT</h1>
+                        <p class="lead">How to Get Your G License Appointment</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="d-flex justify-content-center align-items-center vh-100">
+                <div class="card shadow-lg" style="width: 100%; max-width: 600px;">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <h1 class="fw-bold">Manage Appointment Slots</h1>
+                        </div>
+                        <form id="appointmentForm" action="/appointment/add" method="POST">
+                            <!-- Select Date -->
+                            <div class="mb-3">
+                                <label for="date" class="form-label fw-semibold">Select Date:</label>
+                                <input type="date" class="form-control" name="date" id="date" required />
+                            </div>
+
+                            <!-- Time Slots -->
+                            <h2 class="h5 fw-bold mt-4">Select Available Time Slots:</h2>
+                            <div class="d-flex flex-wrap gap-2 mt-2" id="timeSlots">
+                                <% const times=["9:00", "9:30" , "10:00" , "10:30" , "11:00" , "11:30" , "12:00"
+                                    , "12:30" , "1:00" , "1:30" , "2:00" ]; %>
+                                    <% times.forEach(function (time) { %>
+                                        <button type="button" class="btn btn-outline-primary time-slot-button"
+                                            data-time="<%= time %>">
+                                            <%= time %>
+                                        </button>
+                                        <% }); %>
+                            </div>
+
+                            <!-- Hidden Input for Selected Times -->
+                            <input type="hidden" name="times" id="selectedTimes" value="" />
+                            <div id="appointments-data" data-appointments='<%= JSON.stringify(appointments) %>'></div>
+
+                            <!-- Submit Button -->
+                            <div class="mt-4 text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">Add Slots</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Styles -->
+            <style>
+                body {
+                    font-family: 'Roboto', sans-serif;
+                }
+
+                .masthead {
+                    padding: 100px 0;
+                    background-size: cover;
+                    background-position: center;
+                }
+
+                .site-heading h1 {
+                    font-size: 3.5rem;
+                    letter-spacing: 2px;
+                }
+
+                .site-heading .lead {
+                    font-size: 1.25rem;
+                    font-weight: 300;
+                }
+
+                .form-label {
+                    font-size: 1rem;
+                }
+
+                .time-slot-button {
+                    width: 80px;
+                    padding: 10px;
+                    border-radius: 5px;
+                    transition: all 0.3s;
+                }
+
+                .time-slot-button.selected {
+                    background-color: #0d6efd;
+                    color: #fff;
+                }
+
+                .time-slot-button:disabled {
+                    background-color: gray !important;
+                    color: white;
+                }
+
+                .btn-primary {
+                    background-color: #0d6efd;
+                    border-color: #0d6efd;
+                }
+
+                .btn-primary:hover {
+                    background-color: #0b5ed7;
+                    border-color: #0b5ed7;
+                }
+
+                .card {
+                    border-radius: 15px;
+                }
+
+                @media (max-width: 768px) {
+                    .masthead h1 {
+                        font-size: 2.5rem;
+                    }
+                }
+            </style>
+
+            <!-- Script -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const dateInput = document.getElementById('date');
+                    const timeSlotButtons = document.querySelectorAll('.time-slot-button');
+                    const selectedTimesInput = document.getElementById('selectedTimes');
+
+                    const appointmentsData = document.getElementById("appointments-data").getAttribute("data-appointments");
+                    let existingAppointments = JSON.parse(appointmentsData);
+
+                    async function fetchAvailableSlots(date) {
+                        try {
+                            const response = await fetch(`/appointment/availableSlots?date=${date}`);
+                            const data = await response.json();
+                            if (data.success) {
+                                existingAppointments = data.existingAppointments.map((time) => (time.time));
+                                updateAvailableSlots();
+                            }
+                        } catch (error) {
+                            console.error("Error fetching available slots:", error);
+                        }
+                    }
+
+                    function updateAvailableSlots() {
+                        timeSlotButtons.forEach(button => {
+                            const time = button.dataset.time;
+                            if (existingAppointments.includes(time)) {
+                                button.disabled = true;
+                                button.style.backgroundColor = "gray";
+                                button.style.cursor = "not-allowed";
+                            } else {
+                                button.disabled = false;
+                                button.style.backgroundColor = "";
+                                button.style.cursor = "pointer";
+                            }
+                        });
+                    }
+
+                    dateInput.addEventListener('change', function () {
+                        const selectedDate = dateInput.value;
+                        if (selectedDate) {
+                            fetchAvailableSlots(selectedDate);
+                        }
+                    });
+
+                    timeSlotButtons.forEach(button => {
+                        button.addEventListener('click', () => {
+                            if (button.disabled) return;
+                            button.classList.toggle('selected');
+                            const selectedTimes = Array.from(document.querySelectorAll('.time-slot-button.selected'))
+                                .map(button => button.dataset.time);
+                            selectedTimesInput.value = JSON.stringify(selectedTimes);
+                        });
+                    });
+                });
+            </script>
+    </body>
+
+</html>

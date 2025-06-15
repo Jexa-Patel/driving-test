@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('layouts/head'); -%>
+
+
+    <body>
+        <%- include('layouts/nav'); %>
+            <header class="masthead"
+                style="background-image:linear-gradient(rgba(47, 23, 15, 0.65),rgba(47, 23, 15, 0.65)), url('assets/img/intro.jpg')">
+                <div class="container position-relative px-4 px-lg-5">
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-md-10 col-lg-8 col-xl-7">
+                            <div class="site-heading">
+                                <h1>EXAMINER VIEW</h1>
+                                <span class="subheading">You Can View Candidates Here</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="container mt-5">
+                <form method="GET" class="mb-4">
+                    <label for="testType">Filter by Test Type:</label>
+                    <select id="testType" name="testType" class="form-control">
+                        <option value="">All</option>
+                        <option value="g2">G2</option>
+                        <option value="g">G</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary mt-2">Apply Filter</button>
+                </form>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Car Details</th>
+                            <th>Test Type</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(user=> { %>
+                            <tr>
+                                <td>
+                                    <%= user.firstname %>
+                                        <%= user.lastname %>
+                                </td>
+                                <td>
+                                    <%= user.car_details.make %>
+                                        <%= user.car_details.model %>
+                                </td>
+                                <td>
+                                    <%= user.testType %>
+                                </td>
+                                <td><a href="/examiner/driver/<%= user._id %>" class="btn btn-info">View Details</a>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
+    </body>
+
+</html>

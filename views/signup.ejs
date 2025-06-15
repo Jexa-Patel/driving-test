@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('layouts/head'); -%>
+
+    <body>
+        <!-- Navigation-->
+        <%- include('layouts/nav'); -%>
+            <header class="masthead"
+                style="background-image:linear-gradient(rgba(47, 23, 15, 0.65),rgba(47, 23, 15, 0.65)), url('assets/img/intro.jpg')">
+                <div class="container position-relative px-4 px-lg-5">
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-md-10 col-lg-8 col-xl-7">
+                            <div class="site-heading">
+                                <h1>SIGN UP</h1>
+                                <span class="subheading">Create a new account</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main class="mb-4">
+                <div class="container px-4 px-lg-5">
+                    <div class="row gx-4 gx-lg-5 justify-content-center">
+                        <div class="col-md-10 col-lg-8 col-xl-7">
+                            <div class="my-5">
+                                <form id="signupForm" action="/signup" method="POST">
+                                    <div class="form-floating">
+                                        <input class="form-control" id="username" name="username" type="text"
+                                            placeholder="Enter your username..." required />
+                                        <label for="username">Username</label>
+                                    </div>
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="password" name="password"
+                                            placeholder="Password" required>
+                                        <label for="password">Password</label>
+                                    </div>
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" id="repeatPassword"
+                                            name="repeatPassword" placeholder="Repeat Password" required>
+                                        <label for="repeatPassword">Repeat Password</label>
+                                    </div>
+                                    <div class="form-floating">
+                                        <select class="form-control" id="userType" name="userType" required>
+                                            <option value="">Select User Type</option>
+                                            <option value="Driver">Driver</option>
+                                            <option value="Examiner">Examiner</option>
+                                            <option value="Admin">Admin</option>
+                                        </select>
+                                        <label for="userType">User Type</label>
+                                    </div>
+                                    <br />
+                                    <button class="btn btn-primary text-uppercase" type="submit">Sign Up</button>
+                                </form>
+                                <p class="mt-3">Already have an account? <a href="/login">Login</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <%- include('layouts/footer'); -%>
+                <%- include('layouts/script'); -%>
+    </body>
+
+</html>

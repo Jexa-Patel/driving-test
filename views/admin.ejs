@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('layouts/head'); -%>
+
+<body>
+    <%- include('layouts/nav'); -%>
+    <header class="masthead"
+        style="background-image:linear-gradient(rgba(47, 23, 15, 0.65),rgba(47, 23, 15, 0.65)), url('/assets/img/admin.jpg')">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="site-heading">
+                        <h1>Admin Panel</h1>
+                        <span class="subheading">Manage Drive Test System</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="mb-4">
+        <div class="container">
+            <h1 class="text-center my-4">Pass/Fail Candidates</h1>
+        
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Test Type</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% users.forEach(user => { %>
+                  <tr>
+                    <td><%= user.name %></td>
+                    <td><%= user.testType %></td>
+                    <td><%= user.pass ? "Pass" : "Fail" %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+
+</html>
